@@ -1,0 +1,32 @@
+<nav id="navbar-example3" class="navbar navbar-light bg-light">
+    <span class="navbar-brand small"><i class="fa fa-fw fa-newspaper-o"></i> 文章管理</span>
+    <nav class="nav nav-pills flex-column small">
+            <a class="nav-link ml-3 my-1 text-dark" href="{% url 'article:article_column' %}">
+                <i class="fa fa-fw fa-columns"></i> 栏目管理
+            </a>
+            <a class="nav-link ml-3 my-1 text-dark" href="{% url 'article:article_post' %}">
+                <i class="fa fa-fw fa-paper-plane"></i> 发布文章
+            </a>
+            <a class="nav-link ml-3 my-1 text-dark" href="{% url 'article:article_list' %}">
+                <i class="fa fa-fw fa-list-ol"></i> 文章列表
+            </a>
+            <a class="nav-link ml-3 my-1 text-dark" href="{% url 'article:article_tag' %}">
+                <i class="fa fa-fw fa-tags"></i> 文章标签
+            </a>
+    </nav>
+    <span class="navbar-brand small"><i class="fa fa-fw fa-picture-o"></i> 图片管理</span>
+    <nav class="nav nav-pills flex-column small">
+        <a class="nav-link ml-3 my-1 text-dark" href="{% url 'image:list_images' %}">
+            <i class="fa fa-fw fa-magnet"></i> 爬取网图
+        </a>
+    </nav>
+    <span class="navbar-brand small"><i class="fa fa-fw fa-file-video-o"></i> 课程管理</span>
+    <nav class="nav nav-pills flex-column small">
+        <a class="nav-link ml-3 my-1 text-dark" href="{% url 'course:manage_course' %}">
+            <i class="fa fa-fw fa-file-video-o"></i> 课程管理
+        </a>
+        <a class="nav-link ml-3 my-1 text-dark" href="{% url 'course:create_lesson' %}">
+            <i class="fa fa-fw fa-file-video-o"></i> 内容发布
+        </a>
+    </nav>
+</nav>

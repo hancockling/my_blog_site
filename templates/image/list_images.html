@@ -1,0 +1,96 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% block title %}图片管理 | 后台管理{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mt-2 mb-2">
+        <div class="input-group input-group-sm col-6">
+            <input type="text" class="form-control" placeholder="请输入栏目名称" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button"><i class="fa fa-fw fa-search"></i>搜索</button>
+            </div>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-success" onclick="addImage()">
+                    <i class="fa fa-fw fa-plus"></i> 添加网络图片
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-sm small table-hover">
+        <tr class="bg-light font-weight-bold">
+            <td>序号</td>
+            <td>标题</td>
+            <td>图片</td>
+            <td width="7%">操作</td>
+        </tr>
+        {% for image in images %}
+            <tr id="{{ forloop.counter }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ image.title }}</td>
+                <td>
+                    {% thumbnail image.image "100x100" crop="center" as im %}
+                        <img src="{{ im.url }}" class="img-thumbnail">
+                    {% empty %}
+                        <p>No image</p>
+                    {% endthumbnail %}
+                </td>
+                <td class="text-nowrap">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                        <a name="delete" href="javascript:" onclick="del_image(this, {{ image.id }})">
+                            <i class="fa fa-fw fa-trash-o text-danger ml-2"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <p class="alert alert-danger">还没有图片，请点击上面的按钮添加图片</p>
+        {% endfor %}
+    </table>
+
+    {% include "paginator.html" %}
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        function addImage() {
+            layer.open({
+                type: 2,
+                shift: 2,
+                shadeClose: true,
+                title: "添加网络图片",
+                area: ['600px', '400px'],
+                content: "{% url 'image:upload_image' %}",
+            });
+        }
+        function del_image(the, image_id) {
+            var image_title = $(the).parents("tr").children("td").eq(1).text();
+            layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ["400px", "200px"],
+                title: "删除图片",
+                content: '<div class="text-center" style="margin-top:20px"><p>是否确定删除<br>《'+image_title+'》</p></div>',
+                btn: ['确定', '取消'],
+                yes: function () {
+                  $.ajax({
+                      url: "{% url 'image:del_image' %}",
+                      type: "POST",
+                      data: {"image_id": image_id},
+                      success: function (e) {
+                        var status = e['status'];
+                        if (status==="1"){
+                            parent.location.reload();
+                            layer.msg("删除成功");
+                        } else{
+                            layer.msg("删除失败");
+                        }
+                      },
+                  })
+                },
+            });
+        }
+    </script>
+{% endblock %}

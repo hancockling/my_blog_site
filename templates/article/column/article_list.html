@@ -1,0 +1,90 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+{% block title %}文章列表 | 管理后台{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mt-2 mb-2">
+        <div class="input-group input-group-sm col-6">
+            <input type="text" class="form-control" placeholder="请输入文章标题" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button"><i class="fa fa-fw fa-search"></i>搜索</button>
+            </div>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <a class="btn btn-sm btn-success" href="{% url 'article:article_post' %}">
+                    <i class="fa fa-fw fa-paper-plane-o"></i> 发布文章
+                </a>
+            </div>
+        </div>
+    </div>
+    <table class="table table-sm small table-hover">
+        <tr class="bg-light font-weight-bold">
+            <td>序号</td>
+            <td>标题</td>
+            <td>栏目</td>
+            <td>点赞数</td>
+            <td>评论数</td>
+            <td>最近修改</td>
+            <td>发布时间</td>
+            <td width="7%">操作</td>
+        </tr>
+        {% for article in articles %}
+            <tr id="{{ article.id }}">
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{{ article.get_absolute_url }}">{{ article.title | truncatechars:30 }}</a></td>
+                <td>{{ article.column }}</td>
+                <td>{{ article.users_like.count }} 条</td>
+                <td>{{ article.comments.count }} 条</td>
+                <td>{{ article.updated | date:"Y-m-d" }}</td>
+                <td>{{ article.created | date:"Y-m-d" }}</td>
+                <td class="text-nowrap">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                        <a name="edit" href="{% url 'article:redit_article' article.id %}">
+                            <i class="fa fa-fw fa-pencil"></i>
+                        </a>
+                        <a name="delete" href="javascript:" onclick="del_article(this, {{ article.id }})">
+                            <i class="fa fa-fw fa-trash-o text-danger ml-2"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <p class="alert alert-danger">还没有文章，太懒了。</p>
+        {% endfor %}
+    </table>
+
+    {% include "paginator.html" %}
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        function del_article(the, article_id) {
+            var article_name = $(the).parents("tr").children("td").eq(1).text();
+            layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ["400px", "200px"],
+                title: "删除文章",
+                content: '<div class="text-center" style="margin-top:20px"><p>是否确定' +
+                    '删除<br>《'+ article_name+'》</p></div>',
+                btn: ['确定', '取消'],
+                yes: function () {
+                    $.ajax({
+                        url: '{% url "article:del_article" %}',
+                        type: "POST",
+                        data: {"article_id": article_id},
+                        success: function (e) {
+                            if (e==="1"){
+                                parent.location.reload();
+                                layer.msg("删除成功");
+                            }else {
+                                layer.msg("删除失败");
+                            }
+                        },
+                    })
+                },
+            });
+        }
+    </script>
+{% endblock %}

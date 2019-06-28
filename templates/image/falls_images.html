@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}美图{% endblock %}
+{% block content %}
+    <div class="row justify-content-center mb-3">
+        <h2>美图欣赏</h2>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-columns">
+                {% for image in images %}
+                    <div class="card">
+                        <a href="javascript:void(0)" onclick="displayImage('{{image.user}}', '{{image.title}}',
+                                '{{image.image.url}}', '{{image.description}}', '{{request.get_host}}')">
+                            <img src="{{ image.image.url }}" class="card-img-top">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ image.title }}</h5>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        function displayImage(user, title, url, description, host){
+            layer.open({
+                type: 1,
+                title: title,
+                skin: 'layui-layer-rim', //加上边框
+                maxmin: true, //开启最大化最小化按钮
+                area: ['800px', '540px'], //宽高
+                content: '<div class="text-center mt-3"><img src="http://'+host+url+'"><p class="text-center mt-3">发布者：'+user+'</p></div><div class="text-center mt-3">'+description+'</div>',
+            });
+        }
+
+    </script>
+{% endblock %}

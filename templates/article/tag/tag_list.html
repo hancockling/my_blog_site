@@ -1,0 +1,93 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+{% block title %}文章标签 | 管理后台{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mt-2 mb-2">
+        <form class="form-inline" action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div>添加文章标签：</div>
+                {{ article_tag_form.tag }}
+            </div>
+            <button type="button" class="btn btn-sm btn-success ml-2" onclick="add_tag()">
+                <i class="fa fa-fw fa-plus"></i>添加
+            </button>
+        </form>
+    </div>
+
+    <table class="table table-sm small table-hover">
+        <tr class="bg-light font-weight-bold">
+            <td>序号</td>
+            <td>文章标签</td>
+            <td>所属用户</td>
+            <td width="7%">操作</td>
+        </tr>
+        {% for article_tag in article_tags %}
+            <tr id="{{ forloop.counter }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ article_tag.tag }}</td>
+                <td>{{ article_tag.author }}</td>
+                <td class="text-nowrap">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                        <a name="delete" href="javascript:" onclick="del_tag(this, {{ article_tag.id }})">
+                            <i class="fa fa-fw fa-trash-o text-danger ml-2"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <p class="alert alert-danger">还没有标签，太懒了。</p>
+        {% endfor %}
+    </table>
+
+    {% include "paginator.html" %}
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        function add_tag() {
+            var tag = $("#id_tag").val();
+            $.ajax({
+                url: "{% url 'article:article_tag' %}",
+                type: "POST",
+                data: {"tag": tag},
+                success: function (e) {
+                    if(e==="1"){
+                        layer.msg("新标题添加成功");
+                        window.location.reload();
+                    }else {
+                        layer.msg(e)
+                    }
+                },
+            });
+        }
+        function del_tag(the, tag_id) {
+            var article_tag = $(the).parents("tr").children("td").eq(1).text();
+            layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ["400px", "200px"],
+                title: "删除文章标签",
+                content: '<div class="text-center" style="margin-top:20px"><p>是否确定删除文章标签<br>《' +
+                    article_tag+ '》</p></div>',
+                btn: ['确定', '取消'],
+                yes: function () {
+                  $.ajax({
+                     url: "{% url 'article:del_article_tag' %}",
+                     type: "POST",
+                     data: {"tag_id": tag_id},
+                     success: function (e) {
+                        if(e==="1"){
+                            parent.location.reload();
+                            layer.msg("删除成功");
+                        }else {
+                            layer.msg("删除失败");
+                        }
+                     } ,
+                  });
+                },
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,27 @@
+<div class="pagination">
+    <nav>
+        <ul class="pagination pagination-sm">
+            {% if page.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page.previous_page_number }}" aria-label="Previous">
+                        <span aria_hidden="true">&laquo;</span></a>
+                </li>
+            {% endif %}
+
+            {% for page_num in page.paginator.page_range %}
+                {% if page_num == page.number %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{page_num}}</a> </li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{page_num}}</a> </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page.next_page_number }}" aria-label="Next">
+                        <span aria_hidden="true">&raquo;</span></a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>

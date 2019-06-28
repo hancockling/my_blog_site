@@ -1,0 +1,58 @@
+{% extends "article/layer_iframe.html" %}
+{% load staticfiles %}
+{% block content %}
+    <form class="mt-3">
+        <p>请新增扩展名是.jpg或.png的网上照片地址</p><hr>
+        <div class="form-group row">
+            <label for="phototitle" class="col-sm-2 col-form-label">标题</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="phototitle" placeholder="请输入图片标题，即爬图后的图片名称">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="photourl" class="col-sm-2 col-form-label">地址</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="photourl" placeholder="请输入网络地址，即Url">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="photodescription" class="col-sm-2 col-form-label">描述</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="photodescription" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <input id="newphoto" type="button" class="btn btn-primary" value="添加网络图片">
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $('#newphoto').on('click', function(){
+            var title = $("#phototitle").val();
+            var url = $("#photourl").val();
+            var description = $("#photodescription").val();
+            var photo = {"title": title, "url": url, "description": description};
+            $.ajax({
+                url: '{% url "image:upload_image" %}',
+                type: 'POST',
+                data: photo,
+                success: function (e) {
+                    var status = e['status'];
+                    if (status === "1"){
+                        parent.location.reload();
+                    }else if (status === "2") {
+                        layer.msg("图片无法获取，表单有问题")
+                    } else {
+                        layer.msg("图片无法获取，请更换图片")
+                    }
+                },
+            });
+        });
+    </script>
+{% endblock %}

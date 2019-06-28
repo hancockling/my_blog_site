@@ -1,0 +1,12 @@
+<div class="card mb-3">
+    <h5 class="card-header"><i class="fa fa-fw fa-fire text-danger"></i> 最新发布的文章</h5>
+    <div class="card-body small">
+        <ol>
+            {% for article in latest_articles %}
+                <li class="mb-2">
+                    <a href="{{article.get_url_path}}">{{ article.title | truncatechars:30 }}</a>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+</div>

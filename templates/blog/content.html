@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}blog titles{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <h2 class="mt-2 text-center">{{ article.title }}</h2>
+            <p class="text-center">
+                <span>{{ article.author.username }}</span>
+                <span style="margin-left: 20px">{{ publish }}</span>
+            </p>
+            <div>{{ article.body }}</div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="card">
+                <h5 class="card-header">广告</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">跟老齐学：www.itdiffer.com</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

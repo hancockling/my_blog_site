@@ -1,0 +1,52 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+{% block title %}文章详情 | 管理后台{% endblock %}
+
+{% block content %}
+    <header>
+        <h3 class="text-center mt-2 mb-3">{{ article.title }}</h3>
+        <p class="text-center">小编：<span class="badge badge-light">{{ user.username }}</span> |
+            发布时间：<span class="badge badge-light">{{ article.created | date:"Y-m-d h:i" }}</span> |
+            栏目：<span class="badge badge-info">{{ article.column }}</span>
+        </p>
+        <p class="text-center">
+            {% if article.article_tag.all %}
+                <strong>标签：</strong>
+                {% for tag in article.article_tag.all %}
+                    <span class="badge badge-primary">{{ tag }}</span>
+                {% endfor %}
+            {% endif %}
+        </p>
+    </header>
+
+    <link rel="stylesheet" href="{% static 'editor/css/editormd.preview.css' %}" />
+
+    <div id="editormd-view">
+        <textarea id="append-test" style="display: none;">
+{{ article.body }}
+        </textarea>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'editor/lib/marked.min.js' %}"></script>
+    <script src="{% static 'editor/lib/prettify.min.js' %}"></script>
+    <script src="{% static 'editor/lib/raphael.min.js' %}"></script>
+    <script src="{% static 'editor/lib/underscore.min.js' %}"></script>
+    <script src="{% static 'editor/lib/sequence-diagram.min.js' %}"></script>
+    <script src="{% static 'editor/lib/flowchart.min.js' %}"></script>
+    <script src="{% static 'editor/lib/jquery.flowchart.min.js' %}"></script>
+    <script src="{% static 'editor/editormd.js' %}"></script>
+    <script>
+        $(function () {
+           editormd.markdownToHTML("editormd-view", {
+               htmlDecode: "style,script,iframe",
+               emoji: true,
+               taskList: true,
+               tex: true,   //默认不解析
+               flowChart: true,     //默认不解析
+               sequenceDiagram: true,   //默认不解析
+           });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+{% block title %}修改我的信息{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">Edit My Information</div>
+        <div class="card-body bg-light">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        {% if userinfo.photo %}
+                            <img name="user_face" src="{{ userinfo.photo | striptags }}"
+                                 class="img-thumbnail rounded-circle" id="my_photo">
+                        {% endif %}
+                    </div>
+                    <div class="text-center mt-2">
+                        <div class="btn-group" role="group">
+                            <a href="#" onClick="javascript :history.go(-1);" class="btn btn-sm btn-outline-secondary">
+                                返回上一页
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 border-left">
+                    <form action="" method="post" enctype="multipart/form-data" class="small">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                         <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> 是的，确定修改
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

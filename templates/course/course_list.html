@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}课程列表{% endblock %}
+{% block content %}
+    <table class="table table-sm small table-hover">
+        <tr class="bg-light font-weight-bold">
+            <td>序号</td>
+            <td>课程标题</td>
+            <td>讲师</td>
+            <td>发布日期</td>
+        </tr>
+        {% for course in courses %}
+            <tr id="{{ forloop.counter }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ course.title }}</td>
+                <td>{{ course.user }}</td>
+                <td>{{ course.created }}</td>
+            </tr>
+        {% empty %}
+            <p class="alert alert-danger">还没有课程，太懒了。</p>
+        {% endfor %}
+    </table>
+{% endblock %}

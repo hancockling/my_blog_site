@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load article_tags %}
+{% block title %}文章详情{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            {% with total_likes=article.users_like.count users_like=article.users_like.all %}
+                {#     内置标签（赋值语句）：总的点赞数total_likes/该文章的所有点赞用户users_like#}
+                <header>
+                    <h3 class="text-center mt-2 mb-3">{{ article.title }}</h3>
+                    <p class="text-center">小编：
+                        <span class="badge badge-light">
+                <a href="{% url 'article:author_titles' article.author.username %}">{{ article.author.username }}</a>
+                </span> |
+                        发布时间：<span class="badge badge-light">{{ article.created | date:"Y-m-d h:i" }}</span> |
+                        栏目：<span class="badge badge-info">{{ article.column }}</span> |
+                        <span><i class="fa fa-fw fa-thumbs-o-up"></i>{{ total_likes }}个点赞</span> |
+                        <i class="fa fa-fw fa-eye"></i>浏览：<span>{{ article.total_views }}</span>
+                    </p>
+                </header>
+
+                <link rel="stylesheet" href="{% static 'editor/css/editormd.preview.css' %}" />
+
+                <div id="editormd-view">
+        <textarea id="append-test" style="display: none;">
+{{ article.body }}
+        </textarea>
+                </div>
+
+                <div>
+                    <p class="text-center">
+                        <a onclick="like_article({{ article.id }}, 'like')" href="#" class="btn btn-success">
+                            <i class="fa fa-fw fa-thumbs-o-up"></i>点赞
+                        </a>
+                        <a onclick="like_article({{ article.id }}, 'unlike')" href="#" class="btn btn-danger ml-4 ">
+                            <i class="fa fa-fw fa-thumbs-o-down"></i>鸡蛋
+                        </a>
+                    </p>
+                </div>
+                <div>
+                    <p class="text-center">
+                        <strong>点赞本文的读者：</strong>
+                        {% for user in users_like %}
+                            <span class="badge badge-light">{{ user.username }}</span>
+                        {% empty %}
+                            <p class="text-center">还没有人对此文章表态</p>
+                        {% endfor %}
+                    </p>
+                </div>
+
+                <!-- 发表评论 -->
+                <hr>
+                {% if user.is_authenticated %}
+                    <div>
+                        <form action="{% url 'article:post_comment' article.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="body"><strong>我也要发言：</strong></label>
+                                <textarea type="text" class="form-control" id="body" name="body" rows="2"></textarea>
+                            </div>
+                            <!-- 提交按钮 -->
+                            <button type="submit" class="btn btn-primary ">发送</button>
+                        </form>
+                    </div>
+                    <br>
+                {% else %}
+                    <br>
+                    <h5 class="row justify-content-center">
+                        请<a href="{% url 'account:user_login' %}">登录</a>后回复
+                    </h5>
+                    <br>
+                {% endif %}
+
+                <!-- 显示评论 -->
+                <h4>共有{{ comments.count }}条评论</h4>
+                <div>
+                    {% for comment in comments %}
+                        <hr>
+                        <p>
+                            <strong style="color: pink">
+                                {{ comment.commentator }}
+                            </strong> 于
+                            <span style="color: green">
+                    {{ comment.created|date:"Y-m-d H:i:s" }}
+                </span> 时说：
+                        </p>
+                        <pre style="font-family: inherit; font-size: 1em;">
+{{ comment.body }}</pre>
+                    {% endfor %}
+                </div>
+            {% endwith %}
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card mb-3">
+                <h5 class="card-header"><i class="fa fa-fw fa-thumbs-up text-danger"></i> 最受欢迎的文章（浏览量）</h5>
+                <div class="card-body small">
+                    {% show_total_views 5 as total_views %}
+                    <ol>
+                        {% for hot_article in total_views %}
+                            <li class="mb-2">
+                                <a href="{{hot_article.get_url_path}}">{{ hot_article.title | truncatechars:30 }}</a>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+            {% show_latest_articles 5 %}
+
+            <div class="card mb-3">
+                <h5 class="card-header"><i class="fa fa-fw fa-bullhorn text-danger"></i> 最多评论的文章</h5>
+                <div class="card-body small">
+                    {% most_commented_articles 5 as most_comments %}
+                    <ol>
+                        {% for comment_article in most_comments %}
+                            <li class="mb-2">
+                                <a href="{{comment_article.get_url_path}}">{{ comment_article.title | truncatechars:30 }}</a>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <h5 class="card-header"><i class="fa fa-fw fa-file-text-o text-danger"></i> 推荐相似文章</h5>
+                <div class="card-body small">
+                    <ol>
+                        {% for similar in similar_articles %}
+                            <li class="mb-2">
+                                <a href="{{similar.get_url_path}}">{{ similar.title | truncatechars:30 }}</a>
+                            </li>
+                        {% empty %}
+                            对不起，没有相似文章
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'editor/lib/marked.min.js' %}"></script>
+    <script src="{% static 'editor/lib/prettify.min.js' %}"></script>
+    <script src="{% static 'editor/lib/raphael.min.js' %}"></script>
+    <script src="{% static 'editor/lib/underscore.min.js' %}"></script>
+    <script src="{% static 'editor/lib/sequence-diagram.min.js' %}"></script>
+    <script src="{% static 'editor/lib/flowchart.min.js' %}"></script>
+    <script src="{% static 'editor/lib/jquery.flowchart.min.js' %}"></script>
+    <script src="{% static 'editor/editormd.js' %}"></script>
+    <script>
+        $(function () {
+           editormd.markdownToHTML("editormd-view", {
+               htmlDecode: "style,script,iframe",
+               emoji: true,
+               taskList: true,
+               tex: true,   //默认不解析
+               flowChart: true,     //默认不解析
+               sequenceDiagram: true,   //默认不解析
+           });
+        });
+        function like_article(id, action) {
+            $.ajax({
+                url: "{% url 'article:like_article' %}",
+                type: "POST",
+                data: {"id": id, "action": action},
+                success: function (e) {
+                  if(e==="1"){
+                      layer.msg("感谢点赞");
+                      window.location.reload();
+                  }else if (e==="0"){
+                      layer.alert("对不起，您已经点过赞了！",{icon: 0,});
+                  } else {
+                      layer.msg("我会继续努力");
+                      window.location.reload();
+                  }
+                },
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}我的信息{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">My Information</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        {% if userinfo.photo %}
+                            <img name="user_face" src="{{ userinfo.photo | striptags }}"
+                                 class="img-thumbnail rounded-circle" id="my_photo">
+                        {% else %}
+                            <img name="user_face" src="{% static 'images/touxiang.jpg' %}"
+                                 class="img-thumbnail rounded-circle" id="my_photo">
+                        {% endif %}
+                    </div>
+                    <div class="text-center mt-2">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-primary" id="upload_image"
+                                    onclick="upload_image_layer()">
+                                <i class="fa fa-fw fa-upload"></i>上传头像
+                            </button>
+                            <a class="btn btn-sm btn-outline-primary" href="{% url 'account:edit_my_information' %}">
+                                <i class="fa fa-fw fa-pencil"></i>修改信息
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 border-left">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-user-circle-o"></i> 用户名：
+                            <span class="badge badge-light">{{ user.username }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-user-o"></i> 姓名：
+                            <span class="badge badge-light">{{ user.last_name }}{{ user.first_name }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-envelope-o"></i> 邮箱：
+                            <span class="badge badge-light">{{ user.email }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-birthday-cake"></i> 生日：
+                            <span class="badge badge-light">{{ userprofile.birth }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-phone"></i> 电话：
+                            <span class="badge badge-light">{{ userprofile.phone }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-university"></i> 毕业学校：
+                            <span class="badge badge-light">{{ userinfo.school }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-address-book-o"></i> 工作单位：
+                            <span class="badge badge-light">{{ userinfo.company }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-id-badge"></i> 职业：<span class="badge badge-light">
+                            {{ userinfo.profession }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-fw fa-address-card-o"></i> 地址：
+                            <span class="badge badge-light">{{ userinfo.address }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <div class="mb-1"> <i class="fa fa-fw fa-info-circle"></i> 个人介绍：</div>
+                            </div>
+                            <small class="mb-1 mt-2">{{ userinfo.aboutme }}</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function upload_image_layer() {
+            layer.open({
+                type: 2,
+                maxmin: true, //开启最大化最小化按钮
+                shadeClose: true,
+                title: "上传头像",
+                area: ['900px', '580px'],
+                content: "{% url 'account:my_image' %}",
+            });
+        }
+    </script>
+{% endblock %}

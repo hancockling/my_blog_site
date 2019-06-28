@@ -1,0 +1,43 @@
+{% load bootstrap4 %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon.png' %}">
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'layer/theme/default/layer.css' %}">
+    {% block css %}{% endblock %}
+    <style>
+        .layui-layer { font-size:0.875rem;}
+        .layui-layer a:not([href]):not([tabindex]) { color:#FFF;}
+        .layui-layer a:not([href]):not([tabindex]):last-child { color:#333;}
+        .layui-layer a.layui-layer-btn0:not([href]):not([tabindex]):last-child { color:#FFF;}
+    </style>
+</head>
+<body>
+    {% include "article/header.html" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 border-right">
+                {% include 'article/leftslider.html' %}
+            </div>
+            <div class="col-md-10">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'dist/js/popper.min.js' %}"></script>
+<script src="{% static 'dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'layer/theme/layer.js' %}"></script>
+{% block js %}{% endblock %}
+</html>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load article_tags %}
+{% load staticfiles %}
+{% block title %}文章列表{% endblock %}
+{% block content %}
+    <div class="row text-center justify-content-center mb-3">
+        <h2>{{ user.username }}的所有文章</h2>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                {% for article in articles %}
+                    <div class="card border-light mb-4 small">
+                        <h5 class="card-header border-0">
+                            <span class="text-secondary">({{ forloop.counter }})</span>
+                            <a href="{{ article.get_url_path }}" class="text-dark">{{ article.title | truncatechars:28 }}</a>
+                        </h5>
+                        <div class="card-body">
+                            <h5 class="card-title"><span class="badge badge-warning">{{ article.column }}</span></h5>
+                            <div class="card-text text-secondary">
+                                {{ article.body | truncatechars:80 | linebreaks }}
+                            </div>
+                            <a href="{{ article.get_url_path }}" class="btn btn-outline-info btn-sm">阅读本文</a>
+                        </div>
+                        <div class="card-footer border-0">
+                            <small class="text-muted pull-left">作者：
+                                <a href="{% url 'article:author_titles' article.author.username %}" class="badge badge-primary">
+                                    {{ article.author.username }}
+                                </a>
+                            </small>
+                            <!-- 显示浏览量 -->
+                            <small class="text-muted pull-left ml-3">
+                                浏览：<span class="badge badge-success badge-pill">{{ article.total_views }}</span>
+                            </small>
+                            <small class="pull-right">
+                                <span class="text-primary">{{ article.created | date:"Y-m-d h:i:s" }} 发布</span> |
+                                <span class="text-danger">{{ article.updated | date:"Y-m-d h:i:s" }} 更新</span>
+                            </small>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% include "paginator.html" %}
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center small">
+                    <h5 class="card-header">{{ user.username }}</h5>
+                    <div class="card-body">
+                        {% if userinfo.photo %}
+                            <img src="{{ userinfo.photo | striptags }}" class="img-thumbnail rounded-circle" id="my_photo" name="user_face">
+                        {% else %}
+                            <img src="{% static 'images/touxiang.jpg' %}" class="img-thumbnail rounded-circle" id="my_photo" name="user_face">
+                        {% endif %}
+                        <h6 class="card-title mt-2">共发表文章 {% author_total_articles user %} 篇</h6>
+                        {% if userinfo %}
+                            <p class="card-text">{{ userinfo.company }}</p>
+                        {% else %}
+                            <p class="card-text">这个作者太懒了，什么也没有留下。</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-muted">
+                        {{ userinfo.profession }}
+                    </div>
+                </div>
+
+                <div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
